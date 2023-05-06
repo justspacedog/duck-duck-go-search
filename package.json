@@ -5,9 +5,6 @@
   "description": "DuckDuckGo search with suggestions.",
   "icon": "command-icon.png",
   "author": "tegola",
-  "contributors": [
-    "spacedog"
-  ],
   "categories": [
     "Web"
   ],
@@ -22,12 +19,12 @@
   ],
   "preferences": [
     {
-      "default": true,
-      "description": "Enable to locally store DuckDuckGo search history.",
-      "label": "Remember Search History",
       "name": "rememberSearchHistory",
+      "type": "checkbox",
       "required": false,
-      "type": "checkbox"
+      "default": true,
+      "label": "Remember Search History",
+      "description": "Enable to locally store DuckDuckGo search history."
     }
   ],
   "dependencies": {

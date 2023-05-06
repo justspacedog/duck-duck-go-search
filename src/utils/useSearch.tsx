@@ -1,4 +1,5 @@
 import { getPreferenceValues, LocalStorage, showToast, Toast } from "@raycast/api";
+import { AbortError } from "node-fetch";
 import { useState, useRef, useEffect } from "react";
 import { getAutoSearchResults, getSearchHistory, getStaticResult } from "./handleResults";
 import { SearchResult, HISTORY_KEY, Preferences } from "./types";
@@ -40,20 +41,23 @@ export function useSearch() {
       cancelRef.current = new AbortController();
 
       try {
+        setIsLoading(true);
+
         if (searchText) {
-          setIsLoading(true);
           const autoSearchResult = await getAutoSearchResults(searchText, cancelRef.current.signal);
           setAutoResults(autoSearchResult);
         } else {
           setAutoResults([]);
         }
+
+        setIsLoading(false);
       } catch (error) {
-        //         if (error instanceof AbortError) {
-        //           return;
-        //         }
-        //
-        //         console.error("Search error", error);
-        //         showToast(Toast.Style.Failure, "Could not perform search", String(error));
+        if (error instanceof AbortError) {
+          return;
+        }
+
+        console.error("Search error", error);
+        showToast(Toast.Style.Failure, "Could not perform search", String(error));
       }
     };
 
@@ -65,14 +69,7 @@ export function useSearch() {
     const combinedResults = [...staticResults, ...historyResults, ...autoResults].filter(
       (value, index, self) => index === self.findIndex((t) => t.id === value.id)
     );
-    if (
-      autoResults.length > 0 ||
-      /^https?:\/\/[\w-]+(\.[\w-]+)+\/?$/.test(staticResults[0] ? staticResults[0].url : "") ||
-      searchText.trim() === "" ||
-      searchText === "!"
-    ) {
-      setIsLoading(false);
-    }
+
     setResults(combinedResults);
   }, [staticResults, historyResults, autoResults]);
 
