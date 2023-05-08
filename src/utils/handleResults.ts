@@ -110,16 +110,18 @@ export async function getAutoSearchResults(searchText: string, signal: any): Pro
   }
 
   const json = await response.json();
-  
+
   const results: SearchResult[] = [];
-  
+
   (json as Array<any>).map((item: any) => {
     let bang = "";
     const searchText = item.phrase;
-  
+
     if (searchText.substring(0, 1) == "!") {
-      if (searchText.substring(1, searchText.length).length > 2 && searchText.substring(1, searchText.length).split(" ")[0] in BANGS) {
-        
+      if (
+        searchText.substring(1, searchText.length).length > 2 &&
+        searchText.substring(1, searchText.length).split(" ")[0] in BANGS
+      ) {
         bang = searchText.substring(1, searchText.indexOf(" "));
         results.push({
           id: nanoid(),
